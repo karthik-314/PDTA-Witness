@@ -12,11 +12,8 @@
 #include <typeinfo>
 #include <stack>
 #include <unordered_set>
-<<<<<<< HEAD
 #include <vector>
-=======
 #include <unordered_map>
->>>>>>> 78b1f60 (First commit.)
 #include <chrono>
 #include <assert.h>
 #include <cmath>
@@ -51,12 +48,9 @@ namespace tchecker {
        is constructed, but we could stop in between by providing breaking when seeing a final
        state.
        */
-<<<<<<< HEAD
       void run(TS & ts, GRAPH & graph, bool eqOrSim)
       {
-=======
       void run(TS & ts, GRAPH & graph, std::unordered_map<std::string, int> &clocks){
->>>>>>> 78b1f60 (First commit.)
         using namespace std::chrono;
         auto start = high_resolution_clock::now(); 
         using node_ptr_t = typename GRAPH::node_ptr_t;
@@ -78,32 +72,25 @@ namespace tchecker {
           std::tie(initial_node, status, is_new_node) = builder.initial_node(*it);
           std::string name = builder.node_name(initial_node);
           if (is_new_node) {
-<<<<<<< HEAD
             builder.just_add_node(name, initial_node, name, initial_node, to_do);
             // to_do.push(std::make_pair(initial_node, initial_node));
-=======
           	auto vedges_range = ts.outgoing_edges(*initial_node);
           	auto x = vedges_range.begin();
           	typename TS::outgoing_edges_iterator_value_t f = *x;
             builder.add_initial_node(name, initial_node, to_do, f);
->>>>>>> 78b1f60 (First commit.)
           }
         }
 
         std::string init_state = builder.node_name(initial_node);
 
         //Last Version Start ###################################################################################
-<<<<<<< HEAD
         std::vector<std::string> reachable;
         std::unordered_set<std::string> all_reachable;
-=======
         std::unordered_set<std::string> reachable;
         std::unordered_set<std::string> F({"q4"});
         bool non_empty = 0;
         std::tuple<std::string, int, std::string, int> fin_top;
 
-
->>>>>>> 78b1f60 (First commit.)
         while(!to_do.empty()){
           std::tuple<std::string, int, std::string, int> top = to_do.top();
           to_do.pop();
@@ -113,19 +100,16 @@ namespace tchecker {
           node_ptr_t sub = to.second;
           std::string state1 = builder.node_name(root);
           std::string fin_state = builder.node_name(sub);
-<<<<<<< HEAD
           if(state1 == init_state && builder.equal(root, initial_node)){
             if(all_reachable.find(fin_state) == all_reachable.end()){
             	reachable.push_back(fin_state);
             	all_reachable.insert(fin_state);
             }
-=======
           if(F.find(fin_state) != F.end() && state1 == init_state && builder.equal(root, initial_node)){
           	std::cout << "NON EMPTY LANGUAGE\n";
           	non_empty = 1;
           	fin_top = top;
           	break;
->>>>>>> 78b1f60 (First commit.)
           }
           auto vedges_range = ts.outgoing_edges(*sub);
           for(auto it = vedges_range.begin() ; !it.at_end() ; ++it){
@@ -135,13 +119,10 @@ namespace tchecker {
               std::string tgt_name = builder.node_name(tgt_node);
               if(!ed_details.first){
                 //NOP Operation
-<<<<<<< HEAD
                 if(builder.isNewNode(state1, root, tgt_name, tgt_node, eqOrSim)){
                   builder.just_add_node(state1, root, tgt_name, tgt_node, to_do);
-=======
                 if(builder.isNewNode(state1, root, tgt_name, tgt_node)){
                   builder.just_add_node(std::get<0>(top), std::get<1>(top), std::get<2>(top), std::get<3>(top), state1, root, tgt_name, tgt_node, to_do, *it);
->>>>>>> 78b1f60 (First commit.)
                 }
               } else {
                 if(!ed_details.second.first){
@@ -151,29 +132,24 @@ namespace tchecker {
                   if(std::get<0>(z_1)){
                     builder.just_add_node(std::get<0>(top), std::get<1>(top), std::get<2>(top), std::get<3>(top), tgt_name, tgt_node, tgt_name, tgt_node, to_do, *it);
                   }
-<<<<<<< HEAD
                   builder.append_push_and_match_pop(state1, root, tgt_name, n, ed_details.second.second, to_do, eqOrSim);
                 } else {
                   //Pop Operation
                   builder.append_pop_and_match_push(state1, root, tgt_name, tgt_node, ed_details.second.second, to_do, eqOrSim);
-=======
                   builder.append_push_and_match_pop(top, std::get<1>(z_1), root, tgt_name, n, ed_details.second.second, to_do, *it);
                 } else {
                   //Pop Operation
                   builder.append_pop_and_match_push(top, root, tgt_name, tgt_node, ed_details.second.second, to_do, *it);
->>>>>>> 78b1f60 (First commit.)
                 }
               }
             }
           }
         }
-<<<<<<< HEAD
 
         // std::cout << "REACHABLE (WELL NESTED) STATES START\n";
         // std::cout << "REACHABLE (WELL NESTED) STATES END\n";
         std::cout << "[nodes, time(microseconds), states] = ";
         std::cout << "[" << count << ", ";
-=======
         //Get Witness
         if(non_empty){
         	std::stack<std::tuple<std::string, int, std::string, int>> zone_witness_1;
@@ -340,7 +316,6 @@ namespace tchecker {
           std::cout << "Empty Language\n";
         }
 
->>>>>>> 78b1f60 (First commit.)
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<microseconds>(stop - start);
         std::cout << duration.count() << ", {";
